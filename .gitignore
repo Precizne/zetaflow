@@ -31,5 +31,6 @@
 *.out
 *.app
 
-# build/ Directory
+# Directories
 build/
+.cache/
