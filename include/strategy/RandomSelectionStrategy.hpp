@@ -5,7 +5,10 @@
 #include <string>
 #include <vector>
 
-#include "LoadBalancingStrategy.hpp"
+#include "strategy/LoadBalancingStrategy.hpp"
+
+namespace ZetaFlow {
+namespace Strategy {
 
 class RandomSelectionStrategy : public LoadBalancingStrategy {
 public:
@@ -19,3 +22,6 @@ private:
     std::random_device rd;
     std::mt19937 gen;
 };
+
+}
+}

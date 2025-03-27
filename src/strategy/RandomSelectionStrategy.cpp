@@ -1,6 +1,9 @@
 #include <iostream>
 
-#include "strategies/RandomSelectionStrategy.hpp"
+#include "strategy/RandomSelectionStrategy.hpp"
+
+namespace ZetaFlow {
+namespace Strategy {
 
 RandomSelectionStrategy::RandomSelectionStrategy(const std::vector<std::string>& server_list) : servers(server_list), gen(rd()) {}
 
@@ -34,4 +37,7 @@ void RandomSelectionStrategy::updateHealth(const std::string& server, bool is_he
     }
     else
         std::cout << "[RandomSelection] Health update for server " << server << ": healthy" << std::endl;
+}
+
+}
 }

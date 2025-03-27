@@ -4,7 +4,10 @@
 #include <string>
 #include <mutex>
 
-#include "LoadBalancingStrategy.hpp"
+#include "strategy/LoadBalancingStrategy.hpp"
+
+namespace ZetaFlow {
+namespace Strategy {
 
 class RoundRobinStrategy : public LoadBalancingStrategy {
 public:
@@ -17,3 +20,6 @@ private:
     size_t index;
     std::mutex mtx;
 };
+
+}
+}

@@ -6,11 +6,14 @@
 
 #include <boost/asio.hpp>
 
-#include "strategies/LoadBalancingStrategy.hpp"
+#include "strategy/LoadBalancingStrategy.hpp"
 
-class HttpLoadBalancer {
+namespace ZetaFlow {
+namespace LoadBalancer {
+
+class LoadBalancer {
 public:
-    HttpLoadBalancer(short port, const std::vector<std::string>& servers, const std::string& strategy_type);
+    LoadBalancer(short port, const std::vector<std::string>& servers, const std::string& strategy_type);
     void start();
 
 private:
@@ -20,6 +23,9 @@ private:
 
     boost::asio::io_context io_ctx;
     boost::asio::ip::tcp::acceptor acceptor;
-    std::unique_ptr<LoadBalancingStrategy> strategy;
+    std::unique_ptr<Strategy::LoadBalancingStrategy> strategy;
     std::vector<std::string> backend_servers;
 };
+
+}
+}

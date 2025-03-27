@@ -1,25 +1,28 @@
 #include <iostream>
 
-#include "HttpLoadBalancer.hpp"
-#include "LoadBalancerFactory.hpp"
+#include "loadbalancer/LoadBalancer.hpp"
+#include "loadbalancer/LoadBalancerFactory.hpp"
 
 using namespace boost::asio;
 using namespace boost::asio::ip;
 
-HttpLoadBalancer::HttpLoadBalancer(short port, const std::vector<std::string>& servers, const std::string& strategy_type) : acceptor(io_ctx, tcp::endpoint(tcp::v4(), port)), backend_servers(servers) {
+namespace ZetaFlow {
+namespace LoadBalancer {
+
+LoadBalancer::LoadBalancer(short port, const std::vector<std::string>& servers, const std::string& strategy_type) : acceptor(io_ctx, tcp::endpoint(tcp::v4(), port)), backend_servers(servers) {
     strategy = LoadBalancerFactory::createStrategy(strategy_type, servers);
 
     std::cout << "[HttpLoadBalancer] Initialized with strategy: " << strategy_type << std::endl;
 }
 
-void HttpLoadBalancer::start() {
+void LoadBalancer::start() {
     std::cout << "[HttpLoadBalancer] Starting load balancer on port " << acceptor.local_endpoint().port() << "..." << std::endl;
 
     accept();
     io_ctx.run();
 }
 
-void HttpLoadBalancer::accept() {
+void LoadBalancer::accept() {
     auto socket = std::make_shared<tcp::socket>(io_ctx);
 
     acceptor.async_accept(*socket, [this, socket](boost::system::error_code ec) {
@@ -33,7 +36,7 @@ void HttpLoadBalancer::accept() {
     });
 }
 
-void HttpLoadBalancer::handleRequest(std::shared_ptr<tcp::socket> client_socket) {
+void LoadBalancer::handleRequest(std::shared_ptr<tcp::socket> client_socket) {
     auto server_ip = strategy->getNextServer();
 
     if(server_ip.empty()) {
@@ -58,7 +61,7 @@ void HttpLoadBalancer::handleRequest(std::shared_ptr<tcp::socket> client_socket)
     });
 }
 
-void HttpLoadBalancer::relayTraffic(std::shared_ptr<tcp::socket> client_socket, std::shared_ptr<tcp::socket> server_socket) {
+void LoadBalancer::relayTraffic(std::shared_ptr<tcp::socket> client_socket, std::shared_ptr<tcp::socket> server_socket) {
     std::cout << "[relayTraffic] Starting relay between client " << client_socket->remote_endpoint() << " and backend " << server_socket->remote_endpoint() << std::endl;
 
     auto client_buffer = std::make_shared<std::vector<char>>(8192);
@@ -88,4 +91,7 @@ void HttpLoadBalancer::relayTraffic(std::shared_ptr<tcp::socket> client_socket, 
 
     (*forward)(client_socket, server_socket, client_buffer);
     (*forward)(server_socket, client_socket, server_buffer);
+}
+
+}
 }

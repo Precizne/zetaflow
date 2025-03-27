@@ -1,6 +1,9 @@
 #include <iostream>
 
-#include "strategies/LeastConnectionsStrategy.hpp"
+#include "strategy/LeastConnectionsStrategy.hpp"
+
+namespace ZetaFlow {
+namespace Strategy {
 
 LeastConnectionsStrategy::LeastConnectionsStrategy(const std::vector<std::string>& servers) {
     for(const auto& server : servers) {
@@ -40,4 +43,7 @@ void LeastConnectionsStrategy::updateHealth(const std::string& server, bool is_h
     }
     else
         std::cout << "[LeastConnections] Health update for server " << server << ": healthy" << std::endl;
+}
+
+}
 }

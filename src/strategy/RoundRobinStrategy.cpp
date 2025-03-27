@@ -1,6 +1,9 @@
 #include <iostream>
 
-#include "strategies/RoundRobinStrategy.hpp"
+#include "strategy/RoundRobinStrategy.hpp"
+
+namespace ZetaFlow {
+namespace Strategy {
 
 RoundRobinStrategy::RoundRobinStrategy(const std::vector<std::string>& server_list) : servers(server_list), index(0) {}
 
@@ -38,4 +41,7 @@ void RoundRobinStrategy::updateHealth(const std::string& server, bool is_healthy
     }
     else
         std::cout << "[RoundRobin] Health update for server " << server << ": healthy" << std::endl;
+}
+
+}
 }

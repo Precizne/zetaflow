@@ -5,7 +5,10 @@
 #include <unordered_map>
 #include <mutex>
 
-#include "LoadBalancingStrategy.hpp"
+#include "strategy/LoadBalancingStrategy.hpp"
+
+namespace ZetaFlow {
+namespace Strategy {
 
 class LeastConnectionsStrategy : public LoadBalancingStrategy {
 public:
@@ -17,3 +20,6 @@ private:
     std::unordered_map<std::string, int> server_connections;
     std::mutex mtx;
 };
+
+}
+}

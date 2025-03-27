@@ -1,6 +1,9 @@
 #include <iostream>
 
-#include "strategies/ConsistentHashingStrategy.hpp"
+#include "strategy/ConsistentHashingStrategy.hpp"
+
+namespace ZetaFlow {
+namespace Strategy {
 
 ConsistentHashingStrategy::ConsistentHashingStrategy(const std::vector<std::string>& servers) {
     for(const auto& server : servers) {
@@ -40,4 +43,7 @@ void ConsistentHashingStrategy::updateHealth(const std::string& server, bool is_
     }
     else
         std::cout << "[ConsistentHashing] Health update for server " << server << ": healthy" << std::endl;
+}
+
+}
 }

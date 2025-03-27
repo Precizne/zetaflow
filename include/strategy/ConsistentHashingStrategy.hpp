@@ -6,7 +6,10 @@
 #include <string>
 #include <vector>
 
-#include "LoadBalancingStrategy.hpp"
+#include "strategy/LoadBalancingStrategy.hpp"
+
+namespace ZetaFlow {
+namespace Strategy {
 
 class ConsistentHashingStrategy : public LoadBalancingStrategy {
 public:
@@ -19,3 +22,6 @@ private:
     std::hash<std::string> hasher;
     std::mutex mtx;
 };
+
+}
+}
