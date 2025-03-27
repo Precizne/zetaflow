@@ -4,12 +4,12 @@
 #include <string>
 #include <mutex>
 
-#include "strategy/LoadBalancingStrategy.hpp"
+#include "strategy/IStrategy.hpp"
 
 namespace ZetaFlow {
 namespace Strategy {
 
-class RoundRobinStrategy : public LoadBalancingStrategy {
+class RoundRobinStrategy : public IStrategy {
 public:
     RoundRobinStrategy(const std::vector<std::string>& server_list);
     std::string getNextServer() override;

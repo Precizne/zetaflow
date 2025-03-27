@@ -19,6 +19,7 @@ std::string RoundRobinStrategy::getNextServer() {
     index = (index + 1) % servers.size();
 
     std::cout << "[RoundRobin] Selected backend server: " << selected << std::endl;
+
     return selected;
 }
 

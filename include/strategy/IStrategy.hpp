@@ -5,11 +5,11 @@
 namespace ZetaFlow {
 namespace Strategy {
 
-class LoadBalancingStrategy {
+class IStrategy {
 public:
     virtual std::string getNextServer() = 0;
     virtual void updateHealth(const std::string& server, bool is_healthy) = 0;
-    virtual ~LoadBalancingStrategy() = default;
+    virtual ~IStrategy() = default;
 };
 
 }

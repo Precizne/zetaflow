@@ -19,6 +19,7 @@ std::string RandomSelectionStrategy::getNextServer() {
     std::string selected = servers[distrib(gen)];
 
     std::cout << "[RandomSelection] Selected backend server: " << selected << std::endl;
+
     return selected;
 }
 

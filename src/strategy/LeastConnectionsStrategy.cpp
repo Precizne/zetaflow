@@ -24,6 +24,7 @@ std::string LeastConnectionsStrategy::getNextServer() {
     });
 
     std::cout << "[LeastConnections] Selected backend server: " << it->first << " with " << it->second << " connections." << std::endl;
+
     return it->first;
 }
 

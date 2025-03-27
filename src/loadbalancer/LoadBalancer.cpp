@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "loadbalancer/LoadBalancer.hpp"
-#include "loadbalancer/LoadBalancerFactory.hpp"
+#include "strategy/StrategyFactory.hpp"
 
 using namespace boost::asio;
 using namespace boost::asio::ip;
@@ -9,10 +9,10 @@ using namespace boost::asio::ip;
 namespace ZetaFlow {
 namespace LoadBalancer {
 
-LoadBalancer::LoadBalancer(short port, const std::vector<std::string>& servers, const std::string& strategy_type) : acceptor(io_ctx, tcp::endpoint(tcp::v4(), port)), backend_servers(servers) {
-    strategy = LoadBalancerFactory::createStrategy(strategy_type, servers);
+LoadBalancer::LoadBalancer(short port, const std::vector<std::string>& servers, Strategy::StrategyType strategy_type) : acceptor(io_ctx, tcp::endpoint(tcp::v4(), port)), backend_servers(servers) {
+    strategy = Strategy::StrategyFactory::createStrategy(strategy_type, servers);
 
-    std::cout << "[HttpLoadBalancer] Initialized with strategy: " << strategy_type << std::endl;
+    std::cout << "[HttpLoadBalancer] Initialized strategy" << std::endl;
 }
 
 void LoadBalancer::start() {

@@ -6,12 +6,12 @@
 #include <string>
 #include <vector>
 
-#include "strategy/LoadBalancingStrategy.hpp"
+#include "strategy/IStrategy.hpp"
 
 namespace ZetaFlow {
 namespace Strategy {
 
-class ConsistentHashingStrategy : public LoadBalancingStrategy {
+class ConsistentHashingStrategy : public IStrategy {
 public:
     ConsistentHashingStrategy(const std::vector<std::string>& servers);
     std::string getNextServer() override;

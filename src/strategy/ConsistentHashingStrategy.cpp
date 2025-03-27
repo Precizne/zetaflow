@@ -23,6 +23,7 @@ std::string ConsistentHashingStrategy::getNextServer() {
     std::string selected = hash_ring.begin()->second;
 
     std::cout << "[ConsistentHashing] Selected backend server: " << selected << std::endl;
+
     return selected;
 }
 

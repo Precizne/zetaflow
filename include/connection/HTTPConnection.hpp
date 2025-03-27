@@ -4,15 +4,15 @@
 
 #include <boost/asio.hpp>
 
-#include "IConnection.hpp"
+#include "connection/IConnection.hpp"
 
 namespace ZetaFlow {
-namespace Communication {
+namespace Connection {
 
-class HttpConnection : public IConnection {
+class HTTPConnection : public IConnection {
 public:
-    HttpConnection(const std::string &host, int port);
-    void send(const std::string &data) override;
+    HTTPConnection(const std::string& host, short port);
+    void send(const std::string& data) override;
     std::string receive() override;
 
 private:

@@ -5,12 +5,12 @@
 #include <string>
 #include <vector>
 
-#include "strategy/LoadBalancingStrategy.hpp"
+#include "strategy/IStrategy.hpp"
 
 namespace ZetaFlow {
 namespace Strategy {
 
-class RandomSelectionStrategy : public LoadBalancingStrategy {
+class RandomSelectionStrategy : public IStrategy {
 public:
     RandomSelectionStrategy(const std::vector<std::string>& server_list);
     std::string getNextServer() override;

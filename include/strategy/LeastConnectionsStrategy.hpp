@@ -5,12 +5,12 @@
 #include <unordered_map>
 #include <mutex>
 
-#include "strategy/LoadBalancingStrategy.hpp"
+#include "strategy/IStrategy.hpp"
 
 namespace ZetaFlow {
 namespace Strategy {
 
-class LeastConnectionsStrategy : public LoadBalancingStrategy {
+class LeastConnectionsStrategy : public IStrategy {
 public:
     LeastConnectionsStrategy(const std::vector<std::string>& servers);
     std::string getNextServer() override;

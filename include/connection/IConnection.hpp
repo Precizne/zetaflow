@@ -3,13 +3,13 @@
 #include <string>
 
 namespace ZetaFlow {
-namespace Communication {
+namespace Connection {
 
 class IConnection {
 public:
-    virtual ~IConnection() = default;
-    virtual void send(const std::string &data) = 0;
+    virtual void send(const std::string& data) = 0;
     virtual std::string receive() = 0;
+    virtual ~IConnection() = default;
 };
 
 }
