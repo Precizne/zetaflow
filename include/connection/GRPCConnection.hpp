@@ -5,7 +5,7 @@
 #include <grpcpp/grpcpp.h>
 
 #include "connection/IConnection.hpp"
-#include "service.grpc.pb.h"
+#include "ZetaFlowService.grpc.pb.h"
 
 namespace ZetaFlow {
 namespace Connection {
@@ -17,8 +17,10 @@ public:
     std::string receive() override;
 
 private:
-    std::unique_ptr<service::Service::Stub> stub_;
+    std::unique_ptr<LoadBalancer::Stub> stub_;
     std::string sendRequest(const std::string& query);
+
+    std::string server_address;
 };
 
 }

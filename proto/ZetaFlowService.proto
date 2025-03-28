@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package ZetaFlow;
+
+service LoadBalancer {
+    rpc GetServer (Request) returns (Response);
+    rpc UpdateHealth (HealthUpdate) returns (Ack);
+}
+
+message Request {
+    string client_id = 1;
+}
+
+message Response {
+    string server_address = 1;
+}
+
+message HealthUpdate {
+    string server_address = 1;
+    bool is_healthy = 2;
+}
+
+message Ack {
+    bool success = 1;
+}
