@@ -198,16 +198,16 @@ const char descriptor_table_protodef_ZetaFlowService_2eproto[] ABSL_ATTRIBUTE_SE
     "uest\022\021\n\tclient_id\030\001 \001(\t\"\"\n\010Response\022\026\n\016s"
     "erver_address\030\001 \001(\t\":\n\014HealthUpdate\022\026\n\016s"
     "erver_address\030\001 \001(\t\022\022\n\nis_healthy\030\002 \001(\010\""
-    "\026\n\003Ack\022\017\n\007success\030\001 \001(\0102y\n\014LoadBalancer\022"
-    "2\n\tGetServer\022\021.ZetaFlow.Request\032\022.ZetaFl"
-    "ow.Response\0225\n\014UpdateHealth\022\026.ZetaFlow.H"
-    "ealthUpdate\032\r.ZetaFlow.Ackb\006proto3"
+    "\026\n\003Ack\022\017\n\007success\030\001 \001(\0102|\n\017ZetaFlowServi"
+    "ce\0222\n\tGetServer\022\021.ZetaFlow.Request\032\022.Zet"
+    "aFlow.Response\0225\n\014UpdateHealth\022\026.ZetaFlo"
+    "w.HealthUpdate\032\r.ZetaFlow.Ackb\006proto3"
 };
 static ::absl::once_flag descriptor_table_ZetaFlowService_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_ZetaFlowService_2eproto = {
     false,
     false,
-    314,
+    317,
     descriptor_table_protodef_ZetaFlowService_2eproto,
     "ZetaFlowService.proto",
     &descriptor_table_ZetaFlowService_2eproto_once,

@@ -4,8 +4,8 @@ namespace ZetaFlow {
 namespace Connection {
 
 GRPCConnection::GRPCConnection(const std::string& host, short port) {
-    server_address = host + std::to_string(port);
-    stub_ = LoadBalancer::NewStub(grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials()));
+    server_address = std::format("{}:{}", host, port);
+    stub_ = ZetaFlowService::NewStub(grpc::CreateChannel(server_address, grpc::InsecureChannelCredentials()));
 
     std::cout << "[gRPCConnection] Created stub for server at " << server_address << std::endl;
 }

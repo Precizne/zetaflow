@@ -17,7 +17,7 @@ public:
     std::string receive() override;
 
 private:
-    std::unique_ptr<LoadBalancer::Stub> stub_;
+    std::unique_ptr<ZetaFlowService::Stub> stub_;
     std::string sendRequest(const std::string& query);
 
     std::string server_address;

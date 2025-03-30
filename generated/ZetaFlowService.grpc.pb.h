@@ -27,10 +27,10 @@
 
 namespace ZetaFlow {
 
-class LoadBalancer final {
+class ZetaFlowService final {
  public:
   static constexpr char const* service_full_name() {
-    return "ZetaFlow.LoadBalancer";
+    return "ZetaFlow.ZetaFlowService";
   }
   class StubInterface {
    public:

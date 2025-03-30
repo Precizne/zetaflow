@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ZetaFlow;
 
-service LoadBalancer {
+service ZetaFlowService {
     rpc GetServer (Request) returns (Response);
     rpc UpdateHealth (HealthUpdate) returns (Ack);
 }
