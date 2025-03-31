@@ -14,6 +14,7 @@ public:
     HTTPConnection(const std::string& host, short port);
     void send(const std::string& data) override;
     std::string receive() override;
+    bool isConnected() override;
 
 private:
     std::string host_;

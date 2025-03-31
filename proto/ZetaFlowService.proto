@@ -3,8 +3,8 @@ syntax = "proto3";
 package ZetaFlow;
 
 service ZetaFlowService {
-    rpc GetServer (Request) returns (Response);
-    rpc UpdateHealth (HealthUpdate) returns (Ack);
+    rpc GetServer(Request) returns (Response);
+    rpc UpdateHealth(HealthUpdate) returns (Ack);
 }
 
 message Request {

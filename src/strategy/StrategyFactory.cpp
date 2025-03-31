@@ -18,7 +18,7 @@ std::unique_ptr<IStrategy> StrategyFactory::createStrategy(StrategyType type, co
         case StrategyType::RANDOM_SELECTION:
             return std::make_unique<RandomSelectionStrategy>(servers);
         default:
-            throw std::invalid_argument("Unsupported strategy type");
+            throw std::invalid_argument("[StrategyFactory] Unsupported strategy type");
     }
 }
 

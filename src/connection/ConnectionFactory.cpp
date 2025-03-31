@@ -12,7 +12,7 @@ std::unique_ptr<IConnection> ConnectionFactory::createConnection(ConnectionType 
         case ConnectionType::GRPC:
             return std::make_unique<GRPCConnection>(address, port);
         default:
-            throw std::invalid_argument("Unsupported connection type");
+            throw std::invalid_argument("[ConnectionFactory] Unsupported connection type");
     }
 }
 

@@ -15,6 +15,7 @@ public:
     GRPCConnection(const std::string& host, short port);
     void send(const std::string& data) override;
     std::string receive() override;
+    bool isConnected() override;
 
 private:
     std::unique_ptr<ZetaFlowService::Stub> stub_;

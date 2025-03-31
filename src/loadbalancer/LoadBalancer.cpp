@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "loadbalancer/LoadBalancer.hpp"
-#include "strategy/StrategyFactory.hpp"
 
 using namespace boost::asio;
 using namespace boost::asio::ip;
@@ -9,14 +8,14 @@ using namespace boost::asio::ip;
 namespace ZetaFlow {
 namespace LoadBalancer {
 
-LoadBalancer::LoadBalancer(short port, const std::vector<std::string>& servers, Strategy::StrategyType strategy_type) : acceptor(io_ctx, tcp::endpoint(tcp::v4(), port)), backend_servers(servers) {
+LoadBalancer::LoadBalancer(short port, const std::vector<std::string>& servers, Strategy::StrategyType strategy_type, Connection::ConnectionType connection_type, short backend_port) : acceptor(io_ctx, tcp::endpoint(tcp::v4(), port)), backend_servers(servers), connection_type(connection_type), backend_port(backend_port) {
     strategy = Strategy::StrategyFactory::createStrategy(strategy_type, servers);
 
-    std::cout << "[HttpLoadBalancer] Initialized strategy" << std::endl;
+    std::cout << "[LoadBalancer] Initialized strategy" << std::endl;
 }
 
 void LoadBalancer::start() {
-    std::cout << "[HttpLoadBalancer] Starting load balancer on port " << acceptor.local_endpoint().port() << "..." << std::endl;
+    std::cout << "[LoadBalancer] Starting load balancer on port " << acceptor.local_endpoint().port() << "..." << std::endl;
 
     accept();
     io_ctx.run();
@@ -27,70 +26,62 @@ void LoadBalancer::accept() {
 
     acceptor.async_accept(*socket, [this, socket](boost::system::error_code ec) {
         if(!ec) {
-            std::cout << "[HttpLoadBalancer] Accepted new connection from " << socket->remote_endpoint() << std::endl;
+            std::cout << "[LoadBalancer] Accepted new connection from " << socket->remote_endpoint() << std::endl;
+
             handleRequest(socket);
         }
         else
-            std::cerr << "[HttpLoadBalancer] Accept error: " << ec.message() << std::endl;
+            std::cerr << "[LoadBalancer] Accept error: " << ec.message() << std::endl;
         accept();
     });
 }
 
 void LoadBalancer::handleRequest(std::shared_ptr<tcp::socket> client_socket) {
-    auto server_ip = strategy->getNextServer();
+    std::string backend_server = strategy->getNextServer();
 
-    if(server_ip.empty()) {
-        std::cerr << "[HttpLoadBalancer] No available backend server!" << std::endl;
+    if(backend_server.empty()) {
+        std::cerr << "[LoadBalancer] No available backend server!" << std::endl;
+
         return;
     }
-    std::cout << "[HttpLoadBalancer] Forwarding client " << client_socket->remote_endpoint() << " to backend server " << server_ip << std::endl;
 
-    auto server_socket = std::make_shared<tcp::socket>(io_ctx); 
-    tcp::resolver resolver(io_ctx);
-    auto endpoints = resolver.resolve(server_ip, "80");
+    std::cout << "[LoadBalancer] Forwarding client " << client_socket->remote_endpoint() << " to backend server " << backend_server << std::endl;
 
-    async_connect(*server_socket, endpoints, [this, client_socket, server_socket, server_ip](boost::system::error_code ec, tcp::endpoint) {
-        if(!ec) {
-            std::cout << "[HttpLoadBalancer] Connected to backend server " << server_ip << std::endl;
-            relayTraffic(client_socket, server_socket);
-        }
-        else {
-            std::cerr << "[HttpLoadBalancer] Failed to connect to backend server " << server_ip << " Error: " << ec.message() << std::endl;
-            strategy->updateHealth(server_ip, false);
-        }
-    });
-}
+    auto connection = Connection::ConnectionFactory::createConnection(connection_type, backend_server, backend_port);
+    if(!connection->isConnected()) {
+        strategy->updateHealth(backend_server, false);
+        return;
+    }
 
-void LoadBalancer::relayTraffic(std::shared_ptr<tcp::socket> client_socket, std::shared_ptr<tcp::socket> server_socket) {
-    std::cout << "[relayTraffic] Starting relay between client " << client_socket->remote_endpoint() << " and backend " << server_socket->remote_endpoint() << std::endl;
+    auto client_buffer = std::make_shared<std::vector<char>>(1024);
 
-    auto client_buffer = std::make_shared<std::vector<char>>(8192);
-    auto server_buffer = std::make_shared<std::vector<char>>(8192);
-    auto forward = std::make_shared<std::function<void(std::shared_ptr<tcp::socket>, std::shared_ptr<tcp::socket>, std::shared_ptr<std::vector<char>>)>>();
+    client_socket->async_read_some(boost::asio::buffer(*client_buffer), [client_socket, client_buffer, connection = std::move(connection)](boost::system::error_code ec, std::size_t length) mutable {
+            if(ec) {
+                std::cerr << "[LoadBalancer] Error reading from client: " << ec.message() << std::endl;
 
-    *forward = [forward](std::shared_ptr<tcp::socket> src, std::shared_ptr<tcp::socket> dst, std::shared_ptr<std::vector<char>> buffer) {
-        src->async_read_some(boost::asio::buffer(*buffer), [src, dst, buffer, forward](boost::system::error_code ec, std::size_t length) {
-            if(!ec) {
-                async_write(*dst, boost::asio::buffer(*buffer, length), [src, dst, buffer, forward](boost::system::error_code ec2, std::size_t) {
-                    if(!ec2)
-                        (*forward)(src, dst, buffer);
-                    else {
-                        std::cerr << "[relayTraffic] Write error: " << ec2.message() << std::endl;
-                        src->close();
-                        dst->close();
-                    }
+                return;
+            }
+
+            std::string client_request(client_buffer->data(), length);
+
+            std::cout << "[LoadBalancer] Received request from client: " << client_request << std::endl;
+            
+            std::thread([client_socket, client_request, connection = std::move(connection)]() mutable {
+                connection->send(client_request);
+                std::string backend_response = connection->receive();
+
+                std::cout << "[LoadBalancer] Received response from backend: " << backend_response << std::endl;
+
+                boost::asio::async_write(*client_socket, boost::asio::buffer(backend_response), [client_socket, backend_response](boost::system::error_code write_ec, std::size_t length) {
+                    if(write_ec)
+                        std::cerr << "[LoadBalancer] Error writing to client: " << write_ec.message() << std::endl;
+                    else
+                        std::cout << "[LoadBalancer] Successfully wrote " << length << " bytes to client." << std::endl;
+
+                    client_socket->close();
                 });
-            }
-            else {
-                std::cerr << "[relayTraffic] Read error: " << ec.message() << std::endl;
-                src->close();
-                dst->close();
-            }
+            }).detach();
         });
-    };
-
-    (*forward)(client_socket, server_socket, client_buffer);
-    (*forward)(server_socket, client_socket, server_buffer);
 }
 
 }

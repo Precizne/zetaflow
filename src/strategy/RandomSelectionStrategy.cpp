@@ -28,6 +28,7 @@ void RandomSelectionStrategy::updateHealth(const std::string& server, bool is_he
 
     if(!is_healthy) {
         auto it = std::remove(servers.begin(), servers.end(), server);
+
         if(it != servers.end()) {
             servers.erase(it, servers.end());
 
