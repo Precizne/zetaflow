@@ -31,7 +31,7 @@ void ConsistentHashingStrategy::updateHealth(const std::string& server, bool is_
     std::lock_guard<std::mutex> lock(mtx);
     size_t hash = hasher(server);
 
-    if (!is_healthy) {
+    if(!is_healthy) {
         auto it = hash_ring.find(hash);
 
         if(it != hash_ring.end()) {
